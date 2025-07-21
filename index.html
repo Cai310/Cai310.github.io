@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>集中营官网</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .file-item { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .submit-btn { background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>欢迎集中营官网</h1>
+    <p>这里是通知发布中心 📚</p>
+    
+    <!-- 文件列表区域 -->
+    <h2>📁 文件下载区</h2>
+    <div id="homework-list">
+        <!-- LeanCloud 文件链接将动态显示在这里 -->
+        <p>正在加载列表...</p>
+    </div>
+
+    <!-- 提交按钮 -->
+    <h2>📤 提交</h2>
+    <a href="https://uf0m5bbb.leanapp.cn/1.1/files/Class96" class="submit-btn" target="_blank">点我提交文件</a>
+
+    <!-- 引入 LeanCloud SDK -->
+    <script src="//unpkg.com/leancloud-storage@4.13.2/dist/av-min.js"></script>
+    <script>
+        // ============ 配置 LeanCloud ============ 
+        var APP_ID = 'uF0m5bBb1Ks0g93GA52i8XuS-MdYXbMMI';  // 待会儿替换
+        var APP_KEY = 'WE33RHP20LnBxJZqcZC9CFdG'; // 待会儿替换
+        
+        AV.init({ appId: APP_ID, appKey: APP_KEY });
+        
+        // ============ 加载文件列表 ============ 
+        function loadFiles() {
+            var query = new AV.Query('_File');
+            query.descending('createdAt'); // 按上传时间倒序
+            
+            query.find().then(function (files) {
+                var listHTML = '';
+                files.forEach(function(file) {
+                    // 只显示PDF/TXT/Word/Excel文件
+                    var ext = file.get('name').split('.').pop().toLowerCase();
+                    if (['pdf','txt','doc','docx','xls','xlsx'].includes(ext)) {
+                        listHTML += `
+                        <div class="file-item">
+                            <strong>${file.get('name')}</strong> 
+                            <a href="${file.get('url')}" download>↓下载</a>
+                            <span>(${new Date(file.createdAt).toLocaleDateString()})</span>
+                        </div>`;
+                    }
+                });
+                
+                document.getElementById('homework-list').innerHTML = 
+                    listHTML || '<p>暂无文件</p>';
+            });
+        }
+        
+        // 页面加载时执行
+        window.onload = loadFiles;
+    </script>
+</body>
+</html>
